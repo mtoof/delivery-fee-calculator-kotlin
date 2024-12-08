@@ -153,4 +153,14 @@ class DeliveryFeeApplicationTests {
 
         assertEquals(410, surcharge)
     }
+
+    @Test
+    fun `test rush hour surcharge`(){
+        val surcharge = calculatorService.calculateDeliveryFee(790,
+            1000,
+            4,
+            ZonedDateTime.parse("2024-12-06T15:10:00Z"))
+
+        assertEquals(492, surcharge)
+    }
 }

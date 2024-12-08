@@ -1,6 +1,7 @@
 package example.deliveryfee
 
 import org.springframework.stereotype.Service
+import java.time.DayOfWeek
 import java.time.LocalTime
 import java.time.ZonedDateTime
 import kotlin.math.ceil
@@ -56,6 +57,7 @@ class DeliveryFeeCalculatorService {
             deliveryFee = (deliveryFee * RUSH_HOUR).toInt()
 
         deliveryFee = deliveryFee.coerceAtMost(MAX_DELIVERY_FEE)
+
         if (cartValue >= FREE_DELIVERY_THRESHOLD)
             deliveryFee = 0
 
@@ -105,8 +107,10 @@ class DeliveryFeeCalculatorService {
         // However, the fee still cannot be more than the max (15€).
         // Considering timezone, for simplicity,
         // use UTC as a timezone in backend solutions (so Friday rush is 3 - 7 PM UTC).
-        val day = timeStamp.dayOfWeek.value
+        val day = timeStamp.dayOfWeek
         val time = timeStamp.toLocalTime()
-        return (day == 5 && time.isAfter(START_RUSH_HOUR) && time.isBefore(END_RUSH_HOUR))
+        return (day == DayOfWeek.FRIDAY &&
+            (time.equals(START_RUSH_HOUR) || time.isAfter(START_RUSH_HOUR))
+                && (time.equals(END_RUSH_HOUR) || time.isBefore(END_RUSH_HOUR)))
     }
 }
