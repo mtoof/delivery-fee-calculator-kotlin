@@ -7,7 +7,7 @@ import java.time.ZonedDateTime
 import kotlin.math.ceil
 
 @Service
-class DeliveryFeeCalculatorService {
+class DeliveryFeeService {
 
     //{"cart_value": 790, "delivery_distance": 2235, "number_of_items": 4, "time": "2024-01-15T13:00:00Z"}
 
@@ -24,15 +24,13 @@ class DeliveryFeeCalculatorService {
         private const val RUSH_HOUR = 1.2
         private const val MAX_DELIVERY_FEE = 1500
         private const val FREE_DELIVERY_THRESHOLD = 20000
-
-
         private val START_RUSH_HOUR = LocalTime.of(15, 0)
         private val END_RUSH_HOUR = LocalTime.of(19, 0)
 
 
     }
 
-    public fun calculateDeliveryFee(
+    fun calculateDeliveryFee(
         cartValue: Int,
         deliveryDistance: Int,
         itemCount: Int,
@@ -53,8 +51,7 @@ class DeliveryFeeCalculatorService {
 
         deliveryFee = cartValueSurcharge + deliveryDistanceFee + extraItemsFee
 
-        if (isRushHour(timeStamp))
-            deliveryFee = (deliveryFee * RUSH_HOUR).toInt()
+        deliveryFee = isRushHour(timeStamp, deliveryFee)
 
         deliveryFee = deliveryFee.coerceAtMost(MAX_DELIVERY_FEE)
 
@@ -67,12 +64,11 @@ class DeliveryFeeCalculatorService {
         return deliveryFee
     }
 
-    private fun calculateCartValueSurcharge(cartValue: Int): Int {
-        val surcharge: Int = if (cartValue < CART_VALUE_THRESHOLD) CART_VALUE_THRESHOLD - cartValue else 0
-        return surcharge
+    fun calculateCartValueSurcharge(cartValue: Int): Int {
+        return if (cartValue < CART_VALUE_THRESHOLD) CART_VALUE_THRESHOLD - cartValue else 0
     }
 
-    private fun calculateDeliveryDistanceFee(deliveryDistance: Int): Int {
+    fun calculateDeliveryDistanceFee(deliveryDistance: Int): Int {
         //A delivery fee for the first 1000 meters (=1km) is 2€. If the delivery distance is longer than that,
         // 1€ is added for every additional 500 meters that the courier needs to travel before reaching the destination.
         // Even if the distance would be shorter than 500 meters, the minimum fee is always 1€.
@@ -85,7 +81,7 @@ class DeliveryFeeCalculatorService {
         return BASE_DELIVERY_FEE + (extraUnit * ADDITIONAL_DISTANCE_FEE)
     }
 
-    private fun calculateNumberOfItemsFee(itemCount: Int): Int {
+    fun calculateNumberOfItemsFee(itemCount: Int): Int {
         //If the number of items is five or more, an additional 50 cent surcharge is added for each item above
         // and including the fifth item.
         // An extra "bulk" fee applies for more than 12 items of 1,20€
@@ -98,19 +94,22 @@ class DeliveryFeeCalculatorService {
         //The delivery fee can never be more than 15€, including possible surcharges.
 
         val itemsSurcharge: Int = if (itemCount <= ITEM_THRESHOLD) 0 else (itemCount - ITEM_THRESHOLD) * ADDITIONAL_ITEM_FEE
-        val bulkSurcharge = if (itemCount > BULK_ITEM_THRESHOLD) ((itemCount - ITEM_THRESHOLD) * ADDITIONAL_ITEM_FEE) + BULK_ITEM_FEE else 0
+        val bulkSurcharge = if (itemCount > BULK_ITEM_THRESHOLD) BULK_ITEM_FEE else 0
         return itemsSurcharge + bulkSurcharge
     }
 
-    private fun isRushHour(timeStamp: ZonedDateTime): Boolean {
+    fun isRushHour(timeStamp: ZonedDateTime, deliveryFee: Int): Int {
         //During the Friday rush, 3 - 7 PM, the delivery fee (the total fee including possible surcharges) will be multiplied by 1.2x.
         // However, the fee still cannot be more than the max (15€).
         // Considering timezone, for simplicity,
         // use UTC as a timezone in backend solutions (so Friday rush is 3 - 7 PM UTC).
         val day = timeStamp.dayOfWeek
         val time = timeStamp.toLocalTime()
-        return (day == DayOfWeek.FRIDAY &&
+        return if (day == DayOfWeek.FRIDAY &&
             (time.equals(START_RUSH_HOUR) || time.isAfter(START_RUSH_HOUR))
-                && (time.equals(END_RUSH_HOUR) || time.isBefore(END_RUSH_HOUR)))
+            && (time.equals(END_RUSH_HOUR) || time.isBefore(END_RUSH_HOUR)))
+                (deliveryFee * RUSH_HOUR).toInt()
+        else
+            deliveryFee
     }
 }

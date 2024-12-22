@@ -10,7 +10,7 @@ import java.time.ZonedDateTime
 @RestController
 @Validated
 class DeliveryFeeController(
-    private val deliveryFeeCalculatorService: DeliveryFeeCalculatorService
+    private val deliveryFeeService: DeliveryFeeService
 ) {
 
     @PostMapping("/cart")
@@ -21,7 +21,7 @@ class DeliveryFeeController(
         val items: Int = cart.number_of_items
         val time: ZonedDateTime = ZonedDateTime.parse(cart.time)
 
-        val deliveryFee: Int = deliveryFeeCalculatorService.calculateDeliveryFee(cart_value, delivery_distance, items, time)
+        val deliveryFee: Int = deliveryFeeService.calculateDeliveryFee(cart_value, delivery_distance, items, time)
         return ResponseEntity.ok(DeliveryFeeResponse(deliveryFee))
     }
 }
