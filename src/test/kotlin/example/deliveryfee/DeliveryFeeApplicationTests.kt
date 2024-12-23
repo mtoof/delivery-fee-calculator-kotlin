@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.test.web.client.postForEntity
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -39,15 +41,6 @@ class DeliveryFeeApplicationTests {
             .andExpect(MockMvcResultMatchers.content().string(expectedMessage))
     }
 
-    private fun assertIsOkRequest(payloadJson: String, @Suppress("SameParameterValue") expectedMessage: String){
-        mockMvc.perform(
-            MockMvcRequestBuilders.post("/cart")
-                .contentType("application/json")
-                .content(payloadJson))
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.content().string(expectedMessage))
-    }
-
     @Test
     fun shouldCalculateCorrectly() {
         val cart = Cart(790, 2235, 4, "2024-01-15T13:00:00Z")
@@ -57,6 +50,17 @@ class DeliveryFeeApplicationTests {
         val documentContext: DocumentContext = JsonPath.parse(response.body)
         val value: Int = documentContext.read("$.delivery_fee")
         assertEquals(710, value)
+    }
+
+    @Test
+    fun shouldReturnZeroDeliveryFee() {
+        val cart = Cart(200000, 2235, 4, "2024-01-15T13:00:00Z")
+        val response: ResponseEntity<String> = restTemplate.postForEntity("/cart", cart, String::class.java)
+
+        assertEquals(HttpStatus.OK, response.statusCode)
+        val documentContext: DocumentContext = JsonPath.parse(response.body)
+        val value: Int = documentContext.read("$.delivery_fee")
+        assertEquals(0, value)
     }
 
     @Test
@@ -132,15 +136,13 @@ class DeliveryFeeApplicationTests {
 
     @Test
     fun shouldCalculateCorrectlyForRushHour(){
-        val cartJson = """
-                {
-                    "cart_value": 790,
-                    "delivery_distance": 1000,
-                    "number_of_items": 4,
-                    "time": "2024-12-06T15:10:00Z"
-                }
-            """.trimIndent()
-        assertIsOkRequest(cartJson, "{\"delivery_fee\":492}")
+        val cart = Cart(790, 1000, 4, "2024-12-06T15:10:00Z")
+        val response: ResponseEntity<String> = restTemplate.postForEntity("/cart", cart, String::class.java)
+
+        assertEquals(HttpStatus.OK, response.statusCode)
+        val documentContext: DocumentContext = JsonPath.parse(response.body)
+        val value: Int = documentContext.read("$.delivery_fee")
+        assertEquals(492, value)
     }
     //TEST SERVICE LAYER FUNCTIONS
 
