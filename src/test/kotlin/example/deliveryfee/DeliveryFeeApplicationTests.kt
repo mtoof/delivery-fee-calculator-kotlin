@@ -39,7 +39,7 @@ class DeliveryFeeApplicationTests {
             .andExpect(MockMvcResultMatchers.content().string(expectedMessage))
     }
 
-    private fun assertIsOkRequest(payloadJson: String, expectedMessage: String){
+    private fun assertIsOkRequest(payloadJson: String, @Suppress("SameParameterValue") expectedMessage: String){
         mockMvc.perform(
             MockMvcRequestBuilders.post("/cart")
                 .contentType("application/json")
@@ -126,6 +126,7 @@ class DeliveryFeeApplicationTests {
             }
         """.trimIndent()
 
+        @Suppress("SpellCheckingInspection")
         assertBadRequest(cartJson,"Invalid time format. Must be in UTC ISO 8601 format (yyyy-MM-dd'T'HH:mm:ss'Z').")
     }
 
