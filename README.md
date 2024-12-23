@@ -23,7 +23,9 @@ Should return
 ```
 
 ## How to test
-
+```shell
+make test // This will build the project using gradle, build the docker image and run the server.
+```
 
 ## How to stop
 1. Run the following command
