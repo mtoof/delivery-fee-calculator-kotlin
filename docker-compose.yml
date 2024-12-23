@@ -1,0 +1,7 @@
+services:
+  delivery_fee:
+    build: .
+    image: delivery_fee
+    hostname: delivery_fee
+    ports:
+      - "8080:8080"
