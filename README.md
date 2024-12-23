@@ -22,9 +22,9 @@ Should return
 }
 ```
 
-## How to test
+## How to run test units
 ```shell
-make test // This will build the project using gradle, build the docker image and run the server.
+make test
 ```
 
 ## How to stop
