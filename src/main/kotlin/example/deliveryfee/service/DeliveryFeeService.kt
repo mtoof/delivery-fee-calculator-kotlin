@@ -1,4 +1,4 @@
-package example.deliveryfee
+package example.deliveryfee.service
 
 import org.springframework.stereotype.Service
 import java.time.DayOfWeek
@@ -36,7 +36,6 @@ class DeliveryFeeService {
         itemCount: Int,
         timeStamp: ZonedDateTime
     ): Int {
-        var deliveryFee: Int = 0
 
         //If the cart value is less than 10€,
         // a small order surcharge is added to the delivery price.
@@ -49,7 +48,7 @@ class DeliveryFeeService {
 
         val extraItemsFee: Int = calculateNumberOfItemsFee(itemCount)
 
-        deliveryFee = cartValueSurcharge + deliveryDistanceFee + extraItemsFee
+        var deliveryFee = cartValueSurcharge + deliveryDistanceFee + extraItemsFee
 
         deliveryFee = isRushHour(timeStamp, deliveryFee)
 

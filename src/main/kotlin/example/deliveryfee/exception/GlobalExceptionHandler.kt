@@ -1,4 +1,4 @@
-package example.deliveryfee
+package example.deliveryfee.exception
 
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -15,6 +15,6 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidationExceptions(e: MethodArgumentNotValidException): ResponseEntity<String> {
-        return ResponseEntity.badRequest().body("Invalid input data")
+        return ResponseEntity.badRequest().body("Invalid input data: ${e.fieldError?.defaultMessage}")
     }
 }
