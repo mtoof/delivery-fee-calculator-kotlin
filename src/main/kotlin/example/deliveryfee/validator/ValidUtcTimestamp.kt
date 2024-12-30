@@ -2,11 +2,11 @@ package example.deliveryfee.validator
 
 import jakarta.validation.Constraint
 import jakarta.validation.Payload
-import kotlin.annotation.AnnotationTarget.*
+import kotlin.annotation.AnnotationTarget.FIELD
 import kotlin.reflect.KClass
 
 @Constraint(validatedBy = [TimeStampValidator::class])
-@Target(FIELD, PROPERTY, ANNOTATION_CLASS, VALUE_PARAMETER)
+@Target(FIELD)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ValidUtcTimestamp(
     val message: String,

@@ -18,6 +18,6 @@ data class Cart(
     val number_of_items: Int,
 
     @field:NotNull(message = "time can't be null")
-    @field:ValidUtcTimestamp(message = "Timestamp must be in UTC format",)
+    @field:ValidUtcTimestamp(message = "Timestamp must be in UTC format and not exceed the current time",)
     val time: String
 )
