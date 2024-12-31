@@ -3,15 +3,22 @@ This is my solution for [Wolt Internship assignment 2024](https://github.com/wol
 Previously I did the same assignment using FastAPI and this time I did it using Kotlin Spring Boot.
 
 ## How to run
-1. Make sure you have Java 21, docker, Make and Git installed
-2. Clone the repository
-3. Have Java 21 and docker installed
-4. Run the following command
+<ol>
+<li>Make sure you have Java 21, docker, Make and Git installed</li>
+    
+<li>Clone the repository</li>
+    
+<li>Run the following command
+
 ```shell
 make  // This will build the project using gradle, build the docker image and run the server.
 ```
-5. The server will be running on `localhost:8080`
-6. You can test the API using the Postman app or the following curl command
+</li>
+
+<li>The server will be running on `localhost:8080`</li>
+
+<li>You can test the API using the Postman app or the following curl command
+
 ```shell
 curl -X POST http://localhost:8080/cart -H "Content-Type: application/json" -d "{\"cart_value\": 720, \"delivery_distance\": 2235, \"number_of_items\": 4, \"time\": \"2024-01-15T13:00:00Z\"}"
 ```
@@ -21,6 +28,8 @@ Should return
     "delivery_fee": 780
 }
 ```
+</li>
+</ol>
 
 ## How to run test units
 ```shell
