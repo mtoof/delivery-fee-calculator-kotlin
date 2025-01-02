@@ -1,6 +1,6 @@
 # Wolt assignment 2024 🚀
 This is my solution for [Wolt Internship assignment 2024](https://github.com/woltapp/engineering-internship-2024) using Kotlin Spring boot.
-Previously I did the same assignment using FastAPI and this time I did it using Kotlin Spring Boot.
+<br>Previously I did the same assignment using [FastAPI](https://github.com/mtoof/delivery-fee-calculator) and this time I did it using Kotlin Spring Boot.
 
 ## How to run
 <ol>
